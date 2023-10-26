@@ -4,15 +4,17 @@
 
 data Direccion = ARRIBA | ABAJO | IZQUIERDA | DERECHA deriving (Eq, Ord, Show)
 
-destino :: (Integer, Integer) -> Direccion -> (Integer, Integer)
-destino (x,y) ARRIBA = (x, y + 1)
-destino (x,y) ABAJO = (x, y - 1)
-destino (x,y) IZQUIERDA = (x - 1, y)
-destino (x,y) DERECHA = (x + 1, y)
+mueve :: (Integer, Integer) -> Direccion -> (Integer, Integer)
+mueve (x,y) ARRIBA = if x == 0 then (x, y) else (x - 1, y)
+mueve (x,y) ABAJO = if x == 100 then (x, y) else (x + 1, y)
+mueve (x,y) IZQUIERDA = if y == 0 then (x, y) else (x, y - 1)
+mueve (x,y) DERECHA = if y == 100 then (x, y) else (x, y + 1)
 
-destinoLista :: (Integer, Integer) -> [Direccion] -> (Integer, Integer)
-destinoLista p [] = p
-destinoLista p (x:xs) = destinoLista (destino p x) xs
+destino :: (Integer, Integer) -> [Direccion] -> (Integer, Integer)
+destino p xs = foldl (mueve) p xs
+
+trayectoria :: (Integer, Integer) -> [Direccion] -> [(Integer, Integer)]
+trayectoria p xs = tail (foldl (\list x -> list ++ [mueve (last list) x]) [p] xs)
 
 -- Ejercicio 2
 
@@ -45,6 +47,9 @@ instance Num NumComplejo where
     Complejo (x, y) + Complejo (z, w) = Complejo (x + z, y + w)
     Complejo (x, y) - Complejo (z, w) = Complejo (x - z, y - w)
     Complejo (x, y) * Complejo (z, w) = Complejo (x * z - y * w, x * y + y * z)
+
+--instance Fractional NumComplejo where
+    --Complejo (x, y) / Complejo (z, w) = Complejo ((fromIntegral (x * z + y * w)) / (fromIntegral(z^2 + w^2)), fromIntegral((-x * w + z * y)) / (fromIntegral(z^2 + w^2)))
 
 -- Ejercicio 4
 
